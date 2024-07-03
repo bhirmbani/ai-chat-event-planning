@@ -1,34 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import appConfig from "@/config/app";
+import LoginModule from "@/modules/auth";
 
 export default function Login() {
-  return (
-    <div className="flex flex-col items-center justify-center flex-1  bg-background">
-      <div className="mb-8">
-        <LogoIcon className="h-8 w-8 text-primary" />
-      </div>
-      <div className="w-full max-w-md space-y-4">
-        <div className="space-y-2 text-center">
-          <h1 className="text-3xl font-bold">Welcome to {appConfig.name}</h1>
-          <p className="text-muted-foreground">
-            Sign in to start chatting with our AI assistant.
-          </p>
-        </div>
-        <form className="flex gap-2">
-          <Input
-            type="email"
-            placeholder="Enter your email"
-            className="flex-1"
-            required
-          />
-          <Button type="submit" className="shrink-0">
-            Sign In
-          </Button>
-        </form>
-      </div>
-    </div>
-  );
+  return <LoginModule />;
 }
 
 export function LogoIcon(props: any) {
