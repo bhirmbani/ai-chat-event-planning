@@ -3,5 +3,6 @@ import ChatModule from "@/modules/chat";
 
 export default async function Chat() {
   const { data } = await useUserSession();
-  return <ChatModule userId={data.user?.id as string} />;
+  const Component = await ChatModule({ userId: data.user?.id ?? "" });
+  return Component;
 }

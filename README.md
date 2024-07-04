@@ -42,3 +42,40 @@ Login will also a signup page. If user not yet registered on supabase (first tim
 OTP page will have a rule which is can only be used by user if the user already request for OTP in the login page (submit email address).
 
 Chat will be protected and the redirection will be handled on server side to check if user is authenticated or not. If user is not authenticated, then it will redirect to login page.
+
+## REST Api Endpoint
+
+1. GET /chats -> Get all user's chat
+```ts
+// Request
+{
+  userId: string
+}
+```
+```ts
+// Response
+[
+  {
+    id: string
+    name: string
+    messages: Messages[]
+    userId: string
+    createdAt: Date
+    updatedAt: Date
+  }
+]
+```
+2. GET /chats/:id -> Get a chat by id
+```ts
+// Request
+{
+  chatId: string
+}
+```
+3. POST /chats -> Create a new chat
+```ts
+// Request
+{
+  userId: string
+}
+```
