@@ -9,7 +9,7 @@ import { CornerDownLeftIcon } from "lucide-react";
 
 
 export default function ChatOutput() {
-  const { chatId } = useChatDetail();
+  const { chatId, data } = useChatDetail();
 
 
   if (!chatId) {
@@ -29,6 +29,9 @@ export default function ChatOutput() {
     <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-2 lg:col-start-2 md:col-start-2">
       <Badge variant="outline" className="absolute right-3 top-3">
         Output
+      </Badge>
+      <Badge variant="outline" className="absolute left-3 top-3">
+        {data?.data?.result.id}
       </Badge>
       <div className="flex-1" />
       <form

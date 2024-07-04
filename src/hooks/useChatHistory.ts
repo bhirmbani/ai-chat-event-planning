@@ -1,9 +1,9 @@
 "use client";
 import { getChats } from "@/services/chats";
 import { Chat } from "@prisma/client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import useSWR from "swr";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import useSWR, { useSWRConfig } from "swr";
 
 interface UseChatHistoryProps {
   userId: string;
@@ -15,7 +15,10 @@ export interface ChatWithState extends Chat {
 
 export default function useChatHistory({ userId }: UseChatHistoryProps) {
   const [chatWithState, setChatWithState] = useState<ChatWithState[] | []>();
+  const { mutate } = useSWRConfig();
   const router = useRouter();
+  const searchParams = useSearchParams()
+  const chatId = searchParams.get("chatId");
 
   const { isLoading } = useSWR("chats", () => getChats(userId), {
     revalidateOnFocus: false,
@@ -40,6 +43,10 @@ export default function useChatHistory({ userId }: UseChatHistoryProps) {
       setChatWithState(chatWithState);
     },
   });
+
+  useEffect(() => {
+    mutate('chatDetail')
+  }, [chatId, mutate])
 
   const onClickChatItem = (id: string) => {
     const updatedChatWithState = chatWithState?.map((chat) => {

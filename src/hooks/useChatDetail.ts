@@ -1,8 +1,6 @@
 "use client";
 import { getChatDetail } from "@/services/chats";
-import { CommonResponse } from "@/types";
 import useSWR from "swr";
-import { ChatWithState } from "./useChatHistory";
 import { useSearchParams } from "next/navigation";
 
 export default function useChatDetail() {
