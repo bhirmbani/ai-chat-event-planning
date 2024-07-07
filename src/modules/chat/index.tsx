@@ -1,7 +1,8 @@
 import ChatHistoryList from "./chat-history-list";
 import ChatOutput from "./chat-output";
-import StartNewChat from "./start-new-chat";
+import StartNewChat from "./chat-start-new";
 import ChatCount from "./chat-count";
+import WordCloud from "./chat-word-cloud";
 
 interface ChatModuleProps {
   userId: string;
@@ -15,6 +16,7 @@ async function ChatModule({ userId }: ChatModuleProps) {
         x-chunk="dashboard-03-chunk-0"
       >
         <div className="grid w-full items-start gap-6">
+          <WordCloud />
           <ChatCount />
           <fieldset className="grid gap-1 rounded-lg border p-4 min-h-[100px]">
             <legend className="-ml-1 px-3 text-xl font-bold">

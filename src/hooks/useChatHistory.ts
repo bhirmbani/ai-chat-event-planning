@@ -1,6 +1,9 @@
 "use client";
+import { takeMessagesForWordCloud } from "@/lib/utils";
 import { getChats } from "@/services/chats";
+import { wordCloudAtom } from "@/store";
 import { Chat } from "@prisma/client";
+import { useAtom } from "jotai";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
@@ -19,6 +22,7 @@ export default function useChatHistory({ userId }: UseChatHistoryProps) {
   const router = useRouter();
   const searchParams = useSearchParams()
   const chatId = searchParams.get("chatId");
+  const [, setWordCloud] = useAtom(wordCloudAtom);
 
   const { isLoading } = useSWR("chats", () => getChats(userId), {
     revalidateOnFocus: false,
@@ -41,6 +45,8 @@ export default function useChatHistory({ userId }: UseChatHistoryProps) {
         };
       });
       setChatWithState(chatWithState);
+      const wordCloud = takeMessagesForWordCloud(data.data?.result || []);
+      setWordCloud(wordCloud);
     },
   });
 

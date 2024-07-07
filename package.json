@@ -12,6 +12,7 @@
     "generate": "prisma generate"
   },
   "dependencies": {
+    "@amcharts/amcharts5": "^5.9.13",
     "@langchain/core": "^0.2.14",
     "@langchain/openai": "^0.2.1",
     "@prisma/client": "^5.16.1",

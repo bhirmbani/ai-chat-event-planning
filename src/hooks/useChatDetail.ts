@@ -11,7 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ChatMessageItem } from "@/types";
 import { useAtom } from "jotai";
-import { countMessageAtom } from "@/store";
+import { countMessageAtom, wordCloudAtom } from "@/store";
 
 export interface ChatStreamPayload {
   userMessage: string;
@@ -23,8 +23,8 @@ export default function useChatDetail() {
   const [messages, setMessages] = useState<ChatMessageItem[]>([]);
   const [message, setMessage] = useState("");
   const searchParams = useSearchParams();
-  const [, setCount] = useAtom(countMessageAtom)
-
+  const [, setCount] = useAtom(countMessageAtom);
+  const [wordCloud, setWordCloud] = useAtom(wordCloudAtom);
 
   const chatId = searchParams.get("chatId");
 
@@ -37,7 +37,7 @@ export default function useChatDetail() {
         const allMessages = data.data?.result
           .messages as unknown as ChatMessageItem[];
         setMessages(allMessages);
-        setCount(allMessages.length)
+        setCount(allMessages.length);
       },
     }
   );
@@ -51,6 +51,8 @@ export default function useChatDetail() {
         userMessage: message,
         messages,
       });
+      const allPreviousWordCloud = wordCloud.toLowerCase();
+      setWordCloud(allPreviousWordCloud + " " + message);
     },
   });
 
@@ -134,7 +136,7 @@ export default function useChatDetail() {
 
   useEffect(() => {
     if (latestMessage) {
-      setCount(messages.length)
+      setCount(messages.length);
       triggerUpdate({
         messages: messages,
         chatId: `${chatId}`,
