@@ -1,8 +1,31 @@
-# Charcentric
+# AI Chat Event Planning
+
+![Main](./public/main.png)
 
 ## Tech Stack
+- withmartian
+- nextjs 14 app router
+- typescript
+- tailwindcss
+- shadcn/ui
+- prisma
+- supabase for auth and database
+- langchain
+- openai
+- vercel for hosting
 
 ## Project structure
+
+- app (next js route)
+- components (reusable layout and ui)
+- config (static hard coded data)
+- hoc (higher order component)
+- hooks (custom hooks to store module's logic)
+- lib (third party library that customized for our use case)
+- modules (application module based on feature)
+- services (api call separated by module)
+- types.ts file (typescript type definition)
+- store.ts file (global client state management)
 
 ## Database Model
 
@@ -119,10 +142,10 @@ Chat will be protected and the redirection will be handled on server side to che
 We will be using langchain prompt template to help us translate user input and parameters into instructions for a language model.
 
 ### System design overview
-<!-- generate code to view image from public folder -->
+
 ![System Design](./public/aichatevent_sysdesign.png)
 
-We will send every messages (user prompt, LLM response) to the WithMartian API so the LLM can know previous context of the conversation.
+We will send every messages (user prompt, LLM response) to the WithMartian API so the LLM can know the previous context of the conversation.
 
 ### Consideration
 
@@ -140,7 +163,12 @@ We will be using system prompt to the LLM to act as an event planner and only re
 
 By using this approach, the LLM will not adhere to unrelated user queries and will ask the user about 3 criteria above that is related to event planning and provide response based on the criteria.
 
+For example, if user ask about what the chatbot can do, it will response with the following:
+
+![Word cloud](./public/aichatevent_response.png)
+
 **Database Handling**
+
 We are use SSE (Server Sent Event) and saved to database for each streamed message received on the client side.
 
 **Pros**
@@ -152,12 +180,13 @@ We are use SSE (Server Sent Event) and saved to database for each streamed messa
 - increase database write operation
 
 **Limitation**
+
 We are not handling case when user reload page or change to another chat item when streamed message still in progress or error happened. In this case, the database will only save the latest streamed message.
 
 ## Word Cloud
 
-We will be using word cloud to visualize the most common words used in the user prompts.
+We will be using word cloud to visualize the most common words the user used in their prompts.
 
 ### Approach
 
-1. using mapreduce langchain
+![Word cloud](./public/aichatevent_wordcloud.png)
