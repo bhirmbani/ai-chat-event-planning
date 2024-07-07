@@ -1,4 +1,4 @@
-import { createClient, createClientServer } from "@/config/supabase";
+import { createClient, createClientServer } from "@/lib/supabase";
 import { withErrorHandling } from "@/hoc/withErrorHandling";
 
 interface SignInWithEmailProps {

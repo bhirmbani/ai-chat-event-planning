@@ -12,6 +12,8 @@
     "generate": "prisma generate"
   },
   "dependencies": {
+    "@langchain/core": "^0.2.14",
+    "@langchain/openai": "^0.2.1",
     "@prisma/client": "^5.16.1",
     "@radix-ui/react-dialog": "^1.1.1",
     "@radix-ui/react-label": "^2.1.0",
@@ -25,6 +27,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "input-otp": "^1.2.4",
+    "langchain": "^0.2.8",
     "lucide-react": "^0.400.0",
     "next": "14.2.4",
     "next-themes": "^0.3.0",

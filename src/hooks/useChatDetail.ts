@@ -1,9 +1,25 @@
 "use client";
-import { getChatDetail } from "@/services/chats";
+import {
+  SendMessageProps,
+  getChatDetail,
+  sendMessage,
+  updateMessage,
+} from "@/services/chats";
 import useSWR from "swr";
+import useSWRMutation from "swr/mutation";
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { ChatMessageItem } from "@/types";
+
+export interface ChatStreamPayload {
+  userMessage: string;
+  messages: ChatMessageItem[];
+}
 
 export default function useChatDetail() {
+  const [latestMessage, setLatestMessage] = useState<string>("");
+  const [messages, setMessages] = useState<ChatMessageItem[]>([]);
+  const [message, setMessage] = useState("");
   const searchParams = useSearchParams();
 
   const chatId = searchParams.get("chatId");
@@ -13,12 +29,122 @@ export default function useChatDetail() {
     () => getChatDetail(`${chatId}`),
     {
       revalidateOnFocus: false,
+      onSuccess(data) {
+        const allMessages = data.data?.result
+          .messages as unknown as ChatMessageItem[];
+        setMessages(allMessages);
+      },
     }
   );
+
+  const { trigger } = useSWRMutation("/chats/message", sendMessage, {
+    onSuccess: (data) => {
+      const allMessages = data.data?.result
+        .messages as unknown as ChatMessageItem[];
+      setMessages(allMessages);
+      obtainAPIResponse("/api/chats/completion", {
+        userMessage: message,
+        messages,
+      });
+    },
+  });
+
+  const { trigger: triggerUpdate } = useSWRMutation(
+    "/chats/message",
+    updateMessage
+  );
+
+  const obtainAPIResponse = async (
+    apiRoute: string,
+    apiData: ChatStreamPayload
+  ) => {
+    // Initiate the first call to connect to SSE API
+    try {
+      const apiResponse = await fetch(apiRoute, {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/event-stream",
+        },
+        body: JSON.stringify(apiData),
+      });
+
+      if (!apiResponse.body) return;
+
+      // To decode incoming data as a string
+      const reader = apiResponse.body
+        .pipeThrough(new TextDecoderStream())
+        .getReader();
+
+      let incomingMessage = "";
+
+      const assistantMessage = {
+        id: "",
+        role: "assistant",
+        content: incomingMessage,
+        createdAt: new Date(),
+      } as ChatMessageItem;
+      setMessages((prev) => [...prev, assistantMessage] as ChatMessageItem[]);
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) {
+          // Reset the latest message's state received
+          setLatestMessage("");
+          break;
+        }
+        if (value) {
+          // Append the incoming data to latest message's value
+          incomingMessage += value;
+          const assistantMessage = {
+            id: "",
+            role: "assistant",
+            content: incomingMessage,
+            createdAt: new Date(),
+          } as ChatMessageItem;
+          setLatestMessage(incomingMessage);
+
+          setMessages((prev) => {
+            const newMessages = prev.map((each, idx) => {
+              if (each.id === "") {
+                return assistantMessage;
+              }
+              return each;
+            });
+            return newMessages;
+          });
+          setMessage("");
+        } else {
+          // Update the latest message's state with the incoming data
+          setLatestMessage(incomingMessage);
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const onSendMessage = (payload: SendMessageProps) => {
+    trigger(payload);
+  };
+
+  useEffect(() => {
+    if (latestMessage) {
+      triggerUpdate({
+        messages: messages,
+        chatId: `${chatId}`,
+        latestMessage: latestMessage,
+      });
+    }
+  }, [latestMessage, chatId, messages, triggerUpdate]);
 
   return {
     isLoading,
     data,
     chatId,
+    onSendMessage,
+    messages,
+    latestMessage,
+    setMessage,
+    message,
   };
 }
