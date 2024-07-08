@@ -99,13 +99,14 @@ export default function useChatDetail() {
       while (true) {
         const { value, done } = await reader.read();
 
-        console.log('ini-done', done)
-        console.log('isStream', isStream)
-        console.log('value', value)
-        console.log('value', incomingMessage)
+        console.log("ini-done", done);
+        console.log("isStream", isStream);
+        console.log("value", value);
+        console.log("assistantMessage", assistantMessage);
         if (done) {
+          const allMessages = [...messages, assistantMessage];
           triggerUpdate({
-            messages: messages,
+            messages: allMessages,
             chatId: `${chatId}`,
             latestMessage: `${incomingMessage}`,
           });
