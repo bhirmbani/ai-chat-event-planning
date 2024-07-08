@@ -25,6 +25,9 @@ export default function useChatDetail() {
   const searchParams = useSearchParams();
   const [, setCount] = useAtom(countMessageAtom);
   const [wordCloud, setWordCloud] = useAtom(wordCloudAtom);
+  const [isStream, setIsStream] = useState<"init" | "in-progress" | "done">(
+    "init"
+  );
 
   const chatId = searchParams.get("chatId");
 
@@ -67,6 +70,7 @@ export default function useChatDetail() {
   ) => {
     // Initiate the first call to connect to SSE API
     try {
+      setIsStream("in-progress");
       const apiResponse = await fetch(apiRoute, {
         method: "POST",
         headers: {
@@ -127,8 +131,20 @@ export default function useChatDetail() {
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setIsStream("done");
     }
   };
+
+  useEffect(() => {
+    if (isStream === "done") {
+      triggerUpdate({
+        messages: messages,
+        chatId: `${chatId}`,
+        latestMessage: latestMessage,
+      });
+    }
+  }, [isStream]);
 
   const onSendMessage = (payload: SendMessageProps) => {
     trigger(payload);
@@ -137,13 +153,8 @@ export default function useChatDetail() {
   useEffect(() => {
     if (latestMessage) {
       setCount(messages.length);
-      triggerUpdate({
-        messages: messages,
-        chatId: `${chatId}`,
-        latestMessage: latestMessage,
-      });
     }
-  }, [latestMessage, chatId, messages, triggerUpdate, setCount]);
+  }, [latestMessage, messages.length, setCount]);
 
   return {
     isLoading,
