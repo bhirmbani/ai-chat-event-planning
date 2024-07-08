@@ -104,7 +104,8 @@ export default function useChatDetail() {
         console.log("value", value);
         console.log("assistantMessage", assistantMessage);
         if (done) {
-          const allMessages = [...messages, assistantMessage];
+          const prevMsg = data?.data?.result.messages as unknown as ChatMessageItem[];
+          const allMessages = [...prevMsg, assistantMessage];
           triggerUpdate({
             messages: allMessages,
             chatId: `${chatId}`,
