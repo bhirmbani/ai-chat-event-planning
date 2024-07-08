@@ -77,7 +77,7 @@ export default function ChatOutput({ userId }: ChatOutputProps) {
                   >
                     {each.role}
                   </CardDescription>
-                  <p className={cn(each.role === "user" ? "text-primary-foreground" : "text-inherit")}>{each.content}</p>
+                  <p className={cn(each.role === "user" ? "text-primary-foreground" : "text-inherit", "whitespace-pre-line")}>{each.content}</p>
                 </CardContent>
                 <CardFooter className={cn("pb-4 px-4 flex flex-col items-end")}>
                   <small
