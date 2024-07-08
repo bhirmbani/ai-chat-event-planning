@@ -99,6 +99,11 @@ export default function useChatDetail() {
       while (true) {
         const { value, done } = await reader.read();
         if (done) {
+          triggerUpdate({
+            messages: messages,
+            chatId: `${chatId}`,
+            latestMessage: latestMessage,
+          });
           // Reset the latest message's state received
           setLatestMessage("");
           break;
