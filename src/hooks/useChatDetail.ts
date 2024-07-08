@@ -101,11 +101,12 @@ export default function useChatDetail() {
 
         console.log('ini-done', done)
         console.log('isStream', isStream)
+        console.log('value', value)
         if (done) {
           triggerUpdate({
             messages: messages,
             chatId: `${chatId}`,
-            latestMessage: latestMessage,
+            latestMessage: `${value}`,
           });
           setLatestMessage("");
           break;
