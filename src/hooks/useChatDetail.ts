@@ -97,17 +97,7 @@ export default function useChatDetail() {
       setMessages((prev) => [...prev, assistantMessage] as ChatMessageItem[]);
 
       while (true) {
-        const { value, done } = await reader.read();
-        if (done) {
-          triggerUpdate({
-            messages: messages,
-            chatId: `${chatId}`,
-            latestMessage: latestMessage,
-          });
-          // Reset the latest message's state received
-          setLatestMessage("");
-          break;
-        }
+        const { value } = await reader.read();
         if (value) {
           // Append the incoming data to latest message's value
           incomingMessage += value;
