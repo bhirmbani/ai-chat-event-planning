@@ -169,15 +169,15 @@ For example, if user ask about what the chatbot can do, it will response with th
 
 **Database Handling**
 
-We are use SSE (Server Sent Event) and saved to database for each streamed message received on the client side.
+We are use SSE (Server Sent Event) and saved to database at the end of finished streamed message.
 
 **Pros**
 
-- Every streamed message will be saved to database
+- only the latest streamed message will be saved to database, if there is no error during streaming.
 
 **Cons**
 
-- increase database write operation
+- if there is error, the message will not be saved to database.
 
 **Limitation**
 
