@@ -97,7 +97,13 @@ export default function useChatDetail() {
       setMessages((prev) => [...prev, assistantMessage] as ChatMessageItem[]);
 
       while (true) {
-        const { value } = await reader.read();
+        const { value, done } = await reader.read();
+
+        if (done) {
+          setLatestMessage("");
+          break;
+        }
+
         if (value) {
           // Append the incoming data to latest message's value
           incomingMessage += value;
@@ -131,16 +137,6 @@ export default function useChatDetail() {
     }
   };
 
-  useEffect(() => {
-    if (isStream === "done") {
-      triggerUpdate({
-        messages: messages,
-        chatId: `${chatId}`,
-        latestMessage: latestMessage,
-      });
-    }
-  }, [chatId, isStream, latestMessage, messages, triggerUpdate]);
-
   const onSendMessage = (payload: SendMessageProps) => {
     trigger(payload);
   };
@@ -148,8 +144,23 @@ export default function useChatDetail() {
   useEffect(() => {
     if (latestMessage) {
       setCount(messages.length);
+      if (isStream === "done") {
+        triggerUpdate({
+          messages: messages,
+          chatId: `${chatId}`,
+          latestMessage: latestMessage,
+        });
+      }
     }
-  }, [latestMessage, messages.length, setCount]);
+  }, [
+    chatId,
+    isStream,
+    latestMessage,
+    messages,
+    messages.length,
+    setCount,
+    triggerUpdate,
+  ]);
 
   return {
     isLoading,
