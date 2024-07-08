@@ -1,5 +1,6 @@
 import { prisma } from "@/client";
 import { SendMessageProps, UpdateMessageProps } from "@/services/chats";
+import { ChatMessageItem } from "@/types";
 import { Prisma } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -51,7 +52,24 @@ export async function PUT(req: NextRequest) {
   try {
     const requestBody = (await req.json()) as UpdateMessageProps;
 
-    const newMessages = requestBody.messages.map((each, idx) => {
+    const chat = await prisma.chat.findUnique({
+      where: {
+        id: requestBody.chatId,
+      },
+    });
+
+    const prevMessages = chat?.messages as unknown as ChatMessageItem[];
+
+    const newMessage = {
+      id: "",
+      role: "assistant",
+      content: requestBody.latestMessage,
+      createdAt: new Date(),
+    } as ChatMessageItem;
+
+    const allMessages = [...prevMessages, newMessage];
+
+    const newMessages = allMessages.map((each, idx) => {
       if (each.id === "") {
         const { id, ...rest } = each;
         return {
