@@ -144,7 +144,7 @@ export default function useChatDetail() {
         latestMessage: latestMessage,
       });
     }
-  }, [isStream]);
+  }, [chatId, isStream, latestMessage, messages, triggerUpdate]);
 
   const onSendMessage = (payload: SendMessageProps) => {
     trigger(payload);
