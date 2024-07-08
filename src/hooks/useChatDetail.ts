@@ -99,7 +99,14 @@ export default function useChatDetail() {
       while (true) {
         const { value, done } = await reader.read();
 
+        console.log('ini-done', done)
+        console.log('isStream', isStream)
         if (done) {
+          triggerUpdate({
+            messages: messages,
+            chatId: `${chatId}`,
+            latestMessage: latestMessage,
+          });
           setLatestMessage("");
           break;
         }
